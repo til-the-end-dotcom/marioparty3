@@ -57,7 +57,28 @@ s16 func_8000CC98_D898(s32 arg0, s32 arg1) {
     return modelId;
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CD00_D900);
+void func_8000CD00_D900(s16 modelId, f32 x, f32 y, f32 z) {
+    s16 i;
+    u8 *hmfData;
+    u8 *modelSetup;
+    u8 *entry;
+
+    hmfData = (u8 *)HmfModelData[modelId].hmf;
+    modelSetup = (u8 *)HmfModelData[modelId].unkBC;
+    entry = *(u8 **)(modelSetup + 0x58);
+
+    *(f32 *)(modelSetup + 0x08) = x;
+    *(f32 *)(modelSetup + 0x0C) = y;
+
+    i = 0;
+    if (*(s16 *)(hmfData + 0x1A) > 0) {
+        do {
+            *(f32 *)(entry + 0x1C) = -z;
+            i++;
+            entry += 0x30;
+        } while (i < *(s16 *)(hmfData + 0x1A));
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CD74_D974);
 

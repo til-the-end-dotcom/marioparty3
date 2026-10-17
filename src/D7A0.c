@@ -44,7 +44,18 @@ s16 func_8000CBA0_D7A0(s32 arg0, s32 arg1) {
     return modelId;
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CC98_D898);
+s16 func_8000CC98_D898(s32 arg0, s32 arg1) {
+    s16 modelId;
+
+    modelId = func_8000B108_BD08(arg0, arg1);
+    Hu3DModelPosSet(modelId, 0.0f, 0.0f, 0.0f);
+    func_8001C2FC_1CEFC(modelId, 0x20000, 0x20000);
+    func_8001C448_1D048(modelId);
+    func_8001C954_1D554(modelId);
+    func_8001C514_1D114(modelId);
+
+    return modelId;
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CD00_D900);
 

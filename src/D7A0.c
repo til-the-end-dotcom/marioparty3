@@ -150,7 +150,15 @@ s16 func_8000CED8_DAD8(s32 arg0, s32 arg1) {
     return modelId;
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CFA4_DBA4);
+void func_8000CFA4_DBA4(s16 modelId, f32 x, f32 y, f32 z) {
+    HmfModelData_UnkBC_Struct *setup;
+
+    setup = HmfModelData[modelId].unkBC;
+
+    *(f32 *)((u8 *)setup + 0x1C) = x;
+    *(f32 *)((u8 *)setup + 0x20) = y;
+    *(f32 *)((u8 *)setup + 0x24) = z;
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CFD8_DBD8);
 

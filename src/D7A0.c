@@ -1,4 +1,7 @@
 #include "common.h"
+#include "game/hmfman.h"
+
+extern void func_8000D06C_DC6C(omObjData *);
 
 extern s16 func_8000CC98_D898(s32 arg0, s32 arg1);
 extern void func_80013390_13F90(
@@ -121,7 +124,31 @@ s32 func_8000CD74_D974(s16 modelId, f32 x, f32 y, f32 z) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CED8_DAD8);
+s16 func_8000CED8_DAD8(s32 arg0, s32 arg1) {
+    omObjData *obj;
+    s16 modelId;
+    HmfModelData_UnkBC_Struct *setup;
+    f32 zero;
+
+    obj = omAddObj(1000, 0, 0, -1, func_8000D06C_DC6C);
+
+    modelId = func_8000CBA0_D7A0(arg0, arg1);
+    obj->work[0] = modelId;
+
+    setup = HmfModelData[modelId].unkBC;
+
+    zero = 0.0f;
+    *(f32 *)((u8 *)setup + 0x24) = zero;
+    *(f32 *)((u8 *)setup + 0x20) = zero;
+    *(f32 *)((u8 *)setup + 0x1C) = zero;
+
+    setup->unk04 |= 1;
+
+    *(f32 *)((u8 *)setup + 0x10) = 100.0f;
+    *(f32 *)((u8 *)setup + 0x14) = -1.0f;
+
+    return modelId;
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CFA4_DBA4);
 

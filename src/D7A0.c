@@ -167,7 +167,12 @@ void func_8000CFD8_DBD8(s16 modelId, s16 timer) {
     *(f32 *)((u8 *)setup + 0x14) = (f32)timer;
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D018_DC18);
+void func_8000D018_DC18(s16 modelId, f32 value) {
+    HmfModelData_UnkBC_Struct *setup;
+
+    setup = HmfModelData[modelId].unkBC;
+    *(f32 *)((u8 *)setup + 0x10) = value;
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D044_DC44);
 

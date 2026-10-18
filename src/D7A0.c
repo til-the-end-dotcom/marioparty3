@@ -174,7 +174,11 @@ void func_8000D018_DC18(s16 modelId, f32 value) {
     *(f32 *)((u8 *)setup + 0x10) = value;
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D044_DC44);
+extern void func_800138EC_144EC(s16 arg0, s32 arg1, s32 arg2);
+
+void func_8000D044_DC44(s16 modelId) {
+    func_800138EC_144EC(modelId, 5, 4);
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D06C_DC6C);
 

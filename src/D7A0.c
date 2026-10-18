@@ -160,7 +160,12 @@ void func_8000CFA4_DBA4(s16 modelId, f32 x, f32 y, f32 z) {
     *(f32 *)((u8 *)setup + 0x24) = z;
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000CFD8_DBD8);
+void func_8000CFD8_DBD8(s16 modelId, s16 timer) {
+    HmfModelData_UnkBC_Struct *setup;
+
+    setup = HmfModelData[modelId].unkBC;
+    *(f32 *)((u8 *)setup + 0x14) = (f32)timer;
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D018_DC18);
 

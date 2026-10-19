@@ -6,7 +6,7 @@ extern void func_8000D06C_DC6C(omObjData *);
 extern s16 func_8000CC98_D898(s32 arg0, s32 arg1);
 extern void func_80013390_13F90(
     s16 arg0, s32 arg1, s32 arg2, void (*arg3)(void));
-extern void func_8000D268_DE68(void);
+extern void func_8000D268_DE68(s16);
 
 s16 func_8000CBA0_D7A0(s32 arg0, s32 arg1) {
     s16 modelId;
@@ -182,7 +182,64 @@ void func_8000D044_DC44(s16 modelId) {
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D06C_DC6C);
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D268_DE68);
+extern u8 D_80097720_98320[];
+
+void func_8000D268_DE68(s16 modelId) {
+    s16 i;
+    s16 count;
+    u8 *hmfData;
+    u8 *modelSetup;
+    u8 *entry;
+    f32 zero;
+    f32 factor;
+    f32 one;
+    f32 life;
+
+    hmfData = (u8 *)HmfModelData[modelId].hmf;
+    modelSetup = (u8 *)HmfModelData[modelId].unkBC;
+    entry = *(u8 **)(modelSetup + 0x58);
+
+    i = 0;
+    count = *(s16 *)(hmfData + 0x1A);
+
+    if (count > 0) {
+        zero = 0.0f;
+        factor = 0.15f;
+        one = 1.0f;
+
+        do {
+            if (zero < *(f32 *)(entry + 0x04)) {
+                *(f32 *)(entry + 0x0C) +=
+                    *(f32 *)(entry + 0x18);
+
+                *(f32 *)(entry + 0x10) +=
+                    *(f32 *)(entry + 0x1C);
+
+                *(f32 *)(entry + 0x14) +=
+                    *(f32 *)(entry + 0x20);
+
+                life = *(f32 *)(entry + 0x04) -
+                       (*(f32 *)(modelSetup + 0x08) /
+                        *(f32 *)(modelSetup + 0x0C));
+
+                *(f32 *)(entry + 0x04) = life;
+
+                if (life <= zero) {
+                    *(f32 *)(entry + 0x04) = zero;
+                }
+
+                *(f32 *)(entry + 0x08) =
+                    ((f32)D_80097720_98320[(*(s16 *)(modelSetup + 0x02) + i) & 3] * factor + one) *
+                    *(f32 *)(entry + 0x04);
+            }
+
+            i++;
+            entry += 0x30;
+        } while (i < count);
+    }
+
+    (*(u16 *)(modelSetup + 0x02))++;
+}
 
 extern void *D_800D6A00_D7600[8];
 

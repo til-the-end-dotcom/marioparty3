@@ -200,7 +200,69 @@ void func_8000D3AC_DFAC(void) {
     } while (i < 8);
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D3E0_DFE0);
+extern void *HuMemAllocTag(s32 size, s16 tag);
+
+s16 func_8000D3E0_DFE0(
+    s32 allocSize,
+    s32 modelArg,
+    s16 count,
+    void (*callback)(void)) {
+    s16 slot;
+    s16 i;
+    s16 modelId;
+    void **poolSlot;
+    u8 *pool;
+    u8 *entries;
+    f32 zero;
+
+    poolSlot = D_800D6A00_D7600;
+
+    for (slot = 0; slot < 8; slot++, poolSlot++) {
+        if (*poolSlot == 0) {
+            break;
+        }
+    }
+
+    if (slot == 8) {
+        return -1;
+    }
+
+    pool = HuMemAllocTag(8, 0x7918);
+    *poolSlot = pool;
+
+    *(s16 *)(pool + 0x00) = count;
+
+    entries = HuMemAllocTag((s16)count << 4, 0x7918);
+    *(u8 **)(pool + 0x04) = entries;
+
+    i = 0;
+
+    if (count > 0) {
+        zero = 0.0f;
+
+        do {
+            modelId = func_8000CC98_D898(
+                allocSize, modelArg | 4);
+
+            *(s16 *)(entries + 0x02) = modelId;
+
+            func_80013390_13F90(
+                modelId, -1, 0, callback);
+
+            func_800138EC_144EC(modelId, 6, 6);
+
+            *(f32 *)(entries + 0x0C) = zero;
+            *(f32 *)(entries + 0x08) = zero;
+            *(f32 *)(entries + 0x04) = zero;
+            *(s16 *)(entries + 0x00) = 0;
+
+            i++;
+            entries += 0x10;
+        } while (i < count);
+    }
+
+    return slot;
+}
 
 extern s32 func_80013928_14528(s16 modelId);
 extern void func_80013954_14554(s16 modelId, s32 value);

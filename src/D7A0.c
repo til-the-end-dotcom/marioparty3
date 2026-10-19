@@ -184,7 +184,21 @@ INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D06C_DC6C);
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D268_DE68);
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D3AC_DFAC);
+extern void *D_800D6A00_D7600[8];
+
+void func_8000D3AC_DFAC(void) {
+    s16 i;
+    void **entry;
+
+    entry = D_800D6A00_D7600;
+    i = 0;
+
+    do {
+        *entry = 0;
+        i++;
+        entry++;
+    } while (i < 8);
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D3E0_DFE0);
 

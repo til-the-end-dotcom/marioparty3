@@ -363,11 +363,96 @@ s16 func_8000D550_E150(s16 poolIndex, f32 x, f32 y, f32 z) {
 
 extern s16 func_8000D3E0_DFE0(
     s32 arg0, s32 arg1, s16 arg2, void (*arg3)(void));
-extern void func_8000D694_E294(void);
+extern void func_8000D694_E294(s16);
 
 s16 func_8000D658_E258(s32 arg0, s16 arg1) {
     return func_8000D3E0_DFE0(
         0x85, arg0, arg1, func_8000D694_E294);
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D694_E294);
+void func_8000D694_E294(s16 modelId) {
+    u8 *hmfData;
+    u8 *modelSetup;
+    u8 *entry;
+    u16 count;
+    register s32 five __asm__("$22");
+    s32 fullTurn;
+    s16 frame;
+    s16 activeFlag;
+    s16 i;
+    f32 zero;
+    f32 angle;
+    f32 size;
+
+    hmfData = (u8 *)HmfModelData[modelId].hmf;
+    modelSetup = (u8 *)HmfModelData[modelId].unkBC;
+    count = *(u16 *)(hmfData + 0x1A);
+    frame = *(s16 *)(modelSetup + 0x02);
+
+    if (frame == 0) {
+        *(u16 *)(modelSetup + 0x04) &= ~4;
+        entry = *(u8 **)(modelSetup + 0x58);
+        i = 0;
+
+        if (frame < (s16)count) {
+            zero = 0.0f;
+            fullTurn = 360;
+            five = 5;
+
+            for (; i < (s16)count; i++, entry += 0x30) {
+                *(f32 *)(entry + 0x14) = zero;
+                *(f32 *)(entry + 0x10) = zero;
+                *(f32 *)(entry + 0x0C) = zero;
+
+                angle = (f32)((fullTurn / (s16)count) * i);
+
+                *(f32 *)(entry + 0x18) = HuMathSin(angle);
+
+                *(f32 *)(entry + 0x1C) =
+                    (f32)(five - (rand8() & 0xF));
+
+                *(f32 *)(entry + 0x20) = HuMathCos(angle);
+                *(f32 *)(entry + 0x04) = 15.0f;
+            }
+        }
+    }
+
+    activeFlag = *(u16 *)(modelSetup + 0x04) & 4;
+
+    if (activeFlag == 0) {
+        entry = *(u8 **)(modelSetup + 0x58);
+
+        frame = *(s16 *)(modelSetup + 0x02);
+        size = HuMathCos((f32)frame * 11.25f) * 5.0f;
+
+        i = 0;
+
+        if (activeFlag < (s16)count) {
+            for (; i < (s16)count; i++, entry += 0x30) {
+                *(f32 *)(entry + 0x0C) +=
+                    *(f32 *)(entry + 0x18) *
+                    *(f32 *)(entry + 0x04);
+
+                *(f32 *)(entry + 0x10) +=
+                    *(f32 *)(entry + 0x1C);
+
+                *(f32 *)(entry + 0x14) +=
+                    *(f32 *)(entry + 0x20) *
+                    *(f32 *)(entry + 0x04);
+
+                *(f32 *)(entry + 0x08) = size;
+
+                *(f32 *)(entry + 0x1C) -= 2.0f;
+                *(f32 *)(entry + 0x04) *= 0.7f;
+            }
+        }
+
+        frame = *(u16 *)(modelSetup + 0x02) + 1;
+        *(u16 *)(modelSetup + 0x02) = frame;
+
+        if (frame >= 8) {
+            *(u16 *)(modelSetup + 0x04) |= 4;
+            func_8001C258_1CE58(modelId, 4, 4);
+        }
+    }
+}

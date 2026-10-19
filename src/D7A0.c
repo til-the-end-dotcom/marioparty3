@@ -204,6 +204,13 @@ INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D3E0_DFE0);
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D550_E150);
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D658_E258);
+extern s16 func_8000D3E0_DFE0(
+    s32 arg0, s32 arg1, s16 arg2, void (*arg3)(void));
+extern void func_8000D694_E294(void);
+
+s16 func_8000D658_E258(s32 arg0, s16 arg1) {
+    return func_8000D3E0_DFE0(
+        0x85, arg0, arg1, func_8000D694_E294);
+}
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D694_E294);

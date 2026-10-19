@@ -202,7 +202,45 @@ void func_8000D3AC_DFAC(void) {
 
 INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D3E0_DFE0);
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D550_E150);
+extern s32 func_80013928_14528(s16 modelId);
+extern void func_80013954_14554(s16 modelId, s32 value);
+
+s16 func_8000D550_E150(s16 poolIndex, f32 x, f32 y, f32 z) {
+    u8 *pool;
+    u8 *entry;
+    s16 i;
+    s16 modelId;
+
+    pool = (u8 *)D_800D6A00_D7600[poolIndex];
+    entry = *(u8 **)(pool + 0x04);
+
+    i = 0;
+    if (*(s16 *)pool > 0) {
+        do {
+            modelId = *(s16 *)(entry + 0x02);
+
+            if (func_80013928_14528(modelId) & 4) {
+                break;
+            }
+
+            i++;
+            entry += 0x10;
+        } while (i < *(s16 *)pool);
+    }
+
+    if (i == *(s16 *)pool) {
+        return -1;
+    }
+
+    modelId = *(s16 *)(entry + 0x02);
+
+    Hu3DModelPosSet(modelId, x, y, z);
+    func_80013954_14554(modelId, 0);
+    func_800138EC_144EC(modelId, 6, 0);
+    func_8001C258_1CE58(modelId, 4, 0);
+
+    return modelId;
+}
 
 extern s16 func_8000D3E0_DFE0(
     s32 arg0, s32 arg1, s16 arg2, void (*arg3)(void));

@@ -80,7 +80,7 @@ segments:
       - [0xC1F0, c]
       - [0xC3A0, c, esprite]
       - [0xCE10, c, eeprom]
-      - [0xD7A0, asm]
+      - [0xD7A0, c]
       - [0xE560, asm]
       - [0xEFB0, c, stubbed]
       - [0xEFC0, c, gameman]

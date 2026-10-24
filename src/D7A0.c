@@ -180,7 +180,84 @@ void func_8000D044_DC44(s16 modelId) {
     func_800138EC_144EC(modelId, 5, 4);
 }
 
-INCLUDE_ASM("asm/nonmatchings/D7A0", func_8000D06C_DC6C);
+void func_8000D06C_DC6C(omObjData *obj) {
+    s16 modelId;
+    s16 i;
+    HmfData *hmfData;
+    register s32 rawCount __asm__("$2");
+    register u16 count __asm__("$5");
+    s32 signedCount;
+    register s32 exitIndex __asm__("$2");
+    HmfModelData_UnkBC_Struct *setup;
+    register u8 *particle __asm__("$3");
+    f32 timer;
+    f32 zero;
+    f32 x;
+    f32 z;
+
+    modelId = obj->work[0];
+    hmfData = HmfModelData[modelId].hmf;
+    setup = HmfModelData[modelId].unkBC;
+
+    if (setup->unk04 & 4) {
+        particle = *(u8 **)((u8 *)setup + 0x58);
+        rawCount = *(u16 *)((u8 *)hmfData + 0x1A);
+        count = rawCount;
+        i = 0;
+
+        if ((s32)((u32)rawCount << 16) > 0) {
+            zero = 0.0f;
+            rawCount = (s32)((u32)count << 16);
+            signedCount = rawCount >> 16;
+        scan_loop:
+            if (zero < *(f32 *)(particle + 0x04)) {
+                goto scan_done;
+            }
+
+            i++;
+            particle += 0x30;
+
+            if (i < signedCount) {
+                goto scan_loop;
+            }
+        }
+
+    scan_done:
+        __asm__ __volatile__("sll %0,%1,16\n\tsra %0,%0,16" : "=r"(exitIndex) : "r"(i));
+        if (exitIndex == *(s16 *)((u8 *)hmfData + 0x1A)) {
+            func_8001ACDC_1B8DC(modelId);
+            omDelObj(obj);
+            return;
+        }
+
+        setup->unk04 &= ~1;
+    }
+
+    if (*(f32 *)((u8 *)setup + 0x14) >= 0.0f) {
+        timer = *(f32 *)((u8 *)setup + 0x14) - 1.0f;
+        *(f32 *)((u8 *)setup + 0x14) = timer;
+
+        if (timer <= 0.0f) {
+            setup->unk04 &= ~1;
+        }
+    }
+
+    if (setup->unk04 & 1) {
+        x = (f32)rand8() * *(f32 *)((u8 *)setup + 0x10);
+        x = x / 256.0f -
+            *(f32 *)((u8 *)setup + 0x10) / 2.0f;
+
+        z = (f32)rand8() * *(f32 *)((u8 *)setup + 0x10);
+        z = z / 256.0f -
+            *(f32 *)((u8 *)setup + 0x10) / 2.0f;
+
+        func_8000CD74_D974(
+            modelId,
+            x + *(f32 *)((u8 *)setup + 0x1C),
+            *(f32 *)((u8 *)setup + 0x20),
+            z + *(f32 *)((u8 *)setup + 0x24));
+    }
+}
 
 extern u8 D_80097720_98320[];
 
